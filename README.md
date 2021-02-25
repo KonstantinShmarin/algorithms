@@ -962,72 +962,307 @@ for i in range(n):
 
 * 1 - explanation:
 <p align="justify">
+Merge sort is very predictable. It makes between 0.5lg(n) and lg(n) comparisons per element, and between lg(n) and 1.5lg(n) swaps per element. The minima are achieved for already sorted data; the maxima are achieved, on average, for random data. If using Θ(n) extra space is of no concern, then merge sort is an excellent choice: It is simple to implement, and it is the only stable O(n·lg(n)) sorting algorithm. Note that when sorting linked lists, merge sort requires only Θ(lg(n)) extra space (for recursion).
 
-Bubble sort has many of the same properties as insertion sort, but has slightly higher overhead. In the case of nearly sorted data, bubble sort takes O(n) time, but requires at least 2 passes through the data (whereas insertion sort requires something more like 1 pass).
+Merge sort is the algorithm of choice for a variety of situations: when stability is required, when sorting linked lists, and when random access is much more expensive than sequential access (for example, external sorting on tape).
+
+There do exist linear time in-place merge algorithms for the last step of the algorithm, but they are both expensive and complex. The complexity is justified for applications such as external sorting when Θ(n) extra space is not available.
 </p>
 
+* 2 - explanation:
+<p align="justify">
+Like QuickSort, Merge Sort is a Divide and Conquer algorithm. It divides the input array into two halves, calls itself for the two halves, and then merges the two sorted halves. The merge() function is used for merging two halves. The merge(arr, l, m, r) is a key process that assumes that arr[l..m] and arr[m+1..r] are sorted and merges the two sorted sub-arrays into one. See the following C implementation for details.
+</p>
 
+```
+MergeSort(arr[], l,  r)
+If r > l
+     1. Find the middle point to divide the array into two halves:  
+             middle m = l+ (r-l)/2
+     2. Call mergeSort for first half:   
+             Call mergeSort(arr, l, m)
+     3. Call mergeSort for second half:
+             Call mergeSort(arr, m+1, r)
+     4. Merge the two halves sorted in step 2 and 3:
+             Call merge(arr, l, m, r)
 
-![Selection ](https://raw.githubusercontent.com/KonstantinShmarin/algorithms/main/img/sortbubble.gif)
+```
+
+<p align="justify">
+The following diagram from wikipedia shows the complete merge sort process for an example array {38, 27, 43, 3, 9, 82, 10}. If we take a closer look at the diagram, we can see that the array is recursively divided in two halves till the size becomes 1. Once the size becomes 1, the merge processes come into action and start merging arrays back till the complete array is merged.
+</p>
+
+![Merge ](https://raw.githubusercontent.com/KonstantinShmarin/algorithms/main/img/mergesorttutorial.png)
+
+![Merge ](https://raw.githubusercontent.com/KonstantinShmarin/algorithms/main/img/mergesort.gif)
 
 
 -- Pseudocode --
 ```
-FOR J=1 TO N-1 STEP 1
- F=0
- FOR I=0 TO N-1-J STEP 1
-   IF A[I]>A[I+1] THEN SWAP A[I],A[I+1]:F=1
- NEXT I
- IF F=0 THEN EXIT FOR
-NEXT J
+# split in half
+m = n / 2
+
+# recursive sorts
+sort a[1..m]
+sort a[m+1..n]
+
+# merge sorted sub-arrays using temp array
+b = copy of a[1..m]
+i = 1, j = m+1, k = 1
+while i <= m and j <= n,
+    a[k++] = (a[j] < b[i]) ? a[j++] : b[i++]
+    → invariant: a[1..k] in final position
+while i <= m,
+    a[k++] = b[i++]
+    → invariant: a[1..k] in final position
 
 ```
 
 -- C# --
-```
-FOR J=1 TO N-1 STEP 1
- F=0
- FOR I=0 TO N-1-J STEP 1
-   IF A[I]>A[I+1] THEN SWAP A[I],A[I+1]:F=1
- NEXT I
- IF F=0 THEN EXIT FOR
-NEXT J
+```C#
+// C# program for Merge Sort
+using System;
+class MergeSort {
+ 
+    // Merges two subarrays of []arr.
+    // First subarray is arr[l..m]
+    // Second subarray is arr[m+1..r]
+    void merge(int[] arr, int l, int m, int r)
+    {
+        // Find sizes of two
+        // subarrays to be merged
+        int n1 = m - l + 1;
+        int n2 = r - m;
+ 
+        // Create temp arrays
+        int[] L = new int[n1];
+        int[] R = new int[n2];
+        int i, j;
+ 
+        // Copy data to temp arrays
+        for (i = 0; i < n1; ++i)
+            L[i] = arr[l + i];
+        for (j = 0; j < n2; ++j)
+            R[j] = arr[m + 1 + j];
+ 
+        // Merge the temp arrays
+ 
+        // Initial indexes of first
+        // and second subarrays
+        i = 0;
+        j = 0;
+ 
+        // Initial index of merged
+        // subarry array
+        int k = l;
+        while (i < n1 && j < n2) {
+            if (L[i] <= R[j]) {
+                arr[k] = L[i];
+                i++;
+            }
+            else {
+                arr[k] = R[j];
+                j++;
+            }
+            k++;
+        }
+ 
+        // Copy remaining elements
+        // of L[] if any
+        while (i < n1) {
+            arr[k] = L[i];
+            i++;
+            k++;
+        }
+ 
+        // Copy remaining elements
+        // of R[] if any
+        while (j < n2) {
+            arr[k] = R[j];
+            j++;
+            k++;
+        }
+    }
+ 
+    // Main function that
+    // sorts arr[l..r] using
+    // merge()
+    void sort(int[] arr, int l, int r)
+    {
+        if (l < r) {
+            // Find the middle
+            // point
+            int m = l+ (r-l)/2;
+ 
+            // Sort first and
+            // second halves
+            sort(arr, l, m);
+            sort(arr, m + 1, r);
+ 
+            // Merge the sorted halves
+            merge(arr, l, m, r);
+        }
+    }
+ 
+    // A utility function to
+    // print array of size n */
+    static void printArray(int[] arr)
+    {
+        int n = arr.Length;
+        for (int i = 0; i < n; ++i)
+            Console.Write(arr[i] + " ");
+        Console.WriteLine();
+    }
+ 
+    // Driver code
+    public static void Main(String[] args)
+    {
+        int[] arr = { 12, 11, 13, 5, 6, 7 };
+        Console.WriteLine("Given Array");
+        printArray(arr);
+        MergeSort ob = new MergeSort();
+        ob.sort(arr, 0, arr.Length - 1);
+        Console.WriteLine("\nSorted array");
+        printArray(arr);
+    }
+}
+ 
+// This code is contributed by Princi Singh
 
 ```
 
 -- JavaScript --
-```
-FOR J=1 TO N-1 STEP 1
- F=0
- FOR I=0 TO N-1-J STEP 1
-   IF A[I]>A[I+1] THEN SWAP A[I],A[I+1]:F=1
- NEXT I
- IF F=0 THEN EXIT FOR
-NEXT J
+```javascript
+function merge_sort(left_part,right_part) 
+{
+	var i = 0;
+	var j = 0;
+	var results = [];
 
+	while (i < left_part.length || j < right_part.length) {
+		if (i === left_part.length) {
+			// j is the only index left_part
+			results.push(right_part[j]);
+			j++;
+		} 
+      else if (j === right_part.length || left_part[i] <= right_part[j]) {
+			results.push(left_part[i]);
+			i++;
+		} else {
+			results.push(right_part[j]);
+			j++;
+		}
+	}
+	return results;
+}
+
+console.log(merge_sort([1,3,4], [3,7,9]));
 ```
 
 -- PHP --
-```
-FOR J=1 TO N-1 STEP 1
- F=0
- FOR I=0 TO N-1-J STEP 1
-   IF A[I]>A[I+1] THEN SWAP A[I],A[I+1]:F=1
- NEXT I
- IF F=0 THEN EXIT FOR
-NEXT J
-
+```php
+<?php
+function merge_sort($my_array){
+	if(count($my_array) == 1 ) return $my_array;
+	$mid = count($my_array) / 2;
+    $left = array_slice($my_array, 0, $mid);
+    $right = array_slice($my_array, $mid);
+	$left = merge_sort($left);
+	$right = merge_sort($right);
+	return merge($left, $right);
+}
+function merge($left, $right){
+	$res = array();
+	while (count($left) > 0 && count($right) > 0){
+		if($left[0] > $right[0]){
+			$res[] = $right[0];
+			$right = array_slice($right , 1);
+		}else{
+			$res[] = $left[0];
+			$left = array_slice($left, 1);
+		}
+	}
+	while (count($left) > 0){
+		$res[] = $left[0];
+		$left = array_slice($left, 1);
+	}
+	while (count($right) > 0){
+		$res[] = $right[0];
+		$right = array_slice($right, 1);
+	}
+	return $res;
+}
+$test_array = array(100, 54, 7, 2, 5, 4, 1);
+echo "Original Array : ";
+echo implode(', ',$test_array );
+echo "\nSorted Array :";
+echo implode(', ',merge_sort($test_array))."\n";
+?>
 ```
 
 -- Python --
-```
-FOR J=1 TO N-1 STEP 1
- F=0
- FOR I=0 TO N-1-J STEP 1
-   IF A[I]>A[I+1] THEN SWAP A[I],A[I+1]:F=1
- NEXT I
- IF F=0 THEN EXIT FOR
-NEXT J
+```python
+# Python program for implementation of MergeSort
+def mergeSort(arr):
+    if len(arr) > 1:
+ 
+         # Finding the mid of the array
+        mid = len(arr)//2
+ 
+        # Dividing the array elements
+        L = arr[:mid]
+ 
+        # into 2 halves
+        R = arr[mid:]
+ 
+        # Sorting the first half
+        mergeSort(L)
+ 
+        # Sorting the second half
+        mergeSort(R)
+ 
+        i = j = k = 0
+ 
+        # Copy data to temp arrays L[] and R[]
+        while i < len(L) and j < len(R):
+            if L[i] < R[j]:
+                arr[k] = L[i]
+                i += 1
+            else:
+                arr[k] = R[j]
+                j += 1
+            k += 1
+ 
+        # Checking if any element was left
+        while i < len(L):
+            arr[k] = L[i]
+            i += 1
+            k += 1
+ 
+        while j < len(R):
+            arr[k] = R[j]
+            j += 1
+            k += 1
+ 
+# Code to print the list
+ 
+ 
+def printList(arr):
+    for i in range(len(arr)):
+        print(arr[i], end=" ")
+    print()
+ 
+ 
+# Driver Code
+if __name__ == '__main__':
+    arr = [12, 11, 13, 5, 6, 7]
+    print("Given array is", end="\n")
+    printList(arr)
+    mergeSort(arr)
+    print("Sorted array is: ", end="\n")
+    printList(arr)
+ 
+# This code is contributed by Mayank Khanna
 
 ```
 
