@@ -31,24 +31,17 @@ Algorithm
 
 -- Pseudocode --
 ```
-arr[] = 64 25 12 22 11
-
-// Find the minimum element in arr[0...4]
-// and place it at beginning
-11 25 12 22 64
-
-// Find the minimum element in arr[1...4]
-// and place it at beginning of arr[1...4]
-11 12 25 22 64
-
-// Find the minimum element in arr[2...4]
-// and place it at beginning of arr[2...4]
-11 12 22 25 64
-
-// Find the minimum element in arr[3...4]
-// and place it at beginning of arr[3...4]
-11 12 22 25 64 
-
+Another Example: 
+12, 11, 13, 5, 6
+Let us loop for i = 1 (second element of the array) to 4 (last element of the array)
+i = 1. Since 11 is smaller than 12, move 12 and insert 11 before 12 
+11, 12, 13, 5, 6
+i = 2. 13 will remain at its position as all elements in A[0..I-1] are smaller than 13 
+11, 12, 13, 5, 6
+i = 3. 5 will move to the beginning and all other elements from 11 to 13 will move one position ahead of their current position. 
+5, 11, 12, 13, 6
+i = 4. 6 will move to position after 5, and elements from 11 to 13 will move one position ahead of their current position. 
+5, 6, 11, 12, 13 
 ```
 
 -- Pseudocode --
@@ -77,55 +70,54 @@ isort (x : xs) = insert x (isort xs)
 
 -- C#  --
 ```C#
-// C# program for implementation  
-// of Selection Sort 
-using System; 
-  
-class GFG 
-{  
-
-//------------------------------------------
-    static void sort(int []arr) 
-    { 
-        int n = arr.Length; 
-  
-        // One by one move boundary of unsorted subarray 
-        for (int i = 0; i < n - 1; i++) 
-        { 
-            // Find the minimum element in unsorted array 
-            int min_idx = i; 
-            for (int j = i + 1; j < n; j++) 
-                if (arr[j] < arr[min_idx]) 
-                    min_idx = j; 
-  
-            // Swap the found minimum element with the first 
-            // element 
-            int temp = arr[min_idx]; 
-            arr[min_idx] = arr[i]; 
-            arr[i] = temp; 
-        } 
-    } 
- //------------------------------------------
-    // Prints the array 
-    static void printArray(int []arr) 
-    { 
-        int n = arr.Length; 
-        for (int i=0; i<n; ++i) 
-            Console.Write(arr[i]+" "); 
-        Console.WriteLine(); 
-    } 
-  
-    // Driver code  
-    public static void Main() 
-    { 
-        int []arr = {64,25,12,22,11}; 
-        sort(arr); 
-        Console.WriteLine("Sorted array"); 
-        printArray(arr); 
-    } 
-  
-} 
-// This code is contributed by Sam007 
+// C# program for implementation of Insertion Sort
+using System;
+ 
+class InsertionSort {
+ 
+    // Function to sort array
+    // using insertion sort
+    void sort(int[] arr)
+    {
+        int n = arr.Length;
+        for (int i = 1; i < n; ++i) {
+            int key = arr[i];
+            int j = i - 1;
+ 
+            // Move elements of arr[0..i-1],
+            // that are greater than key,
+            // to one position ahead of
+            // their current position
+            while (j >= 0 && arr[j] > key) {
+                arr[j + 1] = arr[j];
+                j = j - 1;
+            }
+            arr[j + 1] = key;
+        }
+    }
+ 
+    // A utility function to print
+    // array of size n
+    static void printArray(int[] arr)
+    {
+        int n = arr.Length;
+        for (int i = 0; i < n; ++i)
+            Console.Write(arr[i] + " ");
+ 
+        Console.Write("\n");
+    }
+ 
+    // Driver Code
+    public static void Main()
+    {
+        int[] arr = { 12, 11, 13, 5, 6 };
+        InsertionSort ob = new InsertionSort();
+        ob.sort(arr);
+        printArray(arr);
+    }
+}
+ 
+// This code is contributed by ChitraNayal.
 ```
 
 -- javascript --
@@ -155,75 +147,129 @@ console.log('Sorted array:', insertionSort(arr));
 
 ```
 
+-- javascript --
+```javascript
+<script>
+    // Javascript program for insertion sort
+
+    // Function to sort an array using insertion sort
+    function insertionSort(arr, n)
+    {
+        let i, key, j;
+        for (i = 1; i < n; i++)
+    {
+        key = arr[i];
+        j = i - 1;
+
+        /* Move elements of arr[0..i-1], that are  
+        greater than key, to one position ahead  
+        of their current position */
+        while (j >= 0 && arr[j] > key)
+    {
+        arr[j + 1] = arr[j];
+        j = j - 1;
+    }
+        arr[j + 1] = key;
+    }
+    }
+
+    // A utility function to print an array of size n
+    function printArray(arr, n)
+    {
+        let i;
+        for (i = 0; i < n; i++)
+        document.write(arr[i] + " ");
+        document.write("<br>");
+    }
+
+    // Driver code
+    let arr = [12, 11, 13, 5, 6 ];
+    let n = arr.length;
+
+    insertionSort(arr, n);
+    printArray(arr, n);
+
+    // This code is contributed by Mayank Tyagi
+
+</script>
+```
+
 -- PHP --
 ```php
 <?php 
-// PHP program for implementation  
-// of selection sort  
-function selection_sort(&$arr, $n)  
-{ 
-    for($i = 0; $i < $n ; $i++) 
-    { 
-        $low = $i; 
-        for($j = $i + 1; $j < $n ; $j++) 
-        { 
-            if ($arr[$j] < $arr[$low]) 
-            { 
-                $low = $j; 
-            } 
-        } 
-          
-        // swap the minimum value to $ith node 
-        if ($arr[$i] > $arr[$low]) 
-        { 
-            $tmp = $arr[$i]; 
-            $arr[$i] = $arr[$low]; 
-            $arr[$low] = $tmp; 
-        } 
-    } 
-} 
-  
-// Driver Code 
-$arr = array(64, 25, 12, 22, 11); 
-$len = count($arr); 
-selection_sort($arr, $len); 
-echo "Sorted array : \n";  
-  
-for ($i = 0; $i < $len; $i++)  
-    echo $arr[$i] . " ";  
-  
-// This code is contributed  
-// by Deepika Gupta.  
-?>  
-
+// PHP program for insertion sort
+ 
+// Function to sort an array
+// using insertion sort
+function insertionSort(&$arr, $n)
+{
+    for ($i = 1; $i < $n; $i++)
+    {
+        $key = $arr[$i];
+        $j = $i-1;
+     
+        // Move elements of arr[0..i-1],
+        // that are    greater than key, to 
+        // one position ahead of their 
+        // current position
+        while ($j >= 0 && $arr[$j] > $key)
+        {
+            $arr[$j + 1] = $arr[$j];
+            $j = $j - 1;
+        }
+         
+        $arr[$j + 1] = $key;
+    }
+}
+ 
+// A utility function to
+// print an array of size n
+function printArray(&$arr, $n)
+{
+    for ($i = 0; $i < $n; $i++)
+        echo $arr[$i]." ";
+    echo "\n";
+}
+ 
+// Driver Code
+$arr = array(12, 11, 13, 5, 6);
+$n = sizeof($arr);
+insertionSort($arr, $n);
+printArray($arr, $n);
+ 
+// This code is contributed by ChitraNayal.
+?>
 ```
 
 -- Python --
 ```Python
-# Python program for implementation of Selection 
-# Sort 
-import sys 
-A = [64, 25, 12, 22, 11] 
-  
-# Traverse through all array elements 
-for i in range(len(A)): 
-      
-    # Find the minimum element in remaining  
-    # unsorted array 
-    min_idx = i 
-    for j in range(i+1, len(A)): 
-        if A[min_idx] > A[j]: 
-            min_idx = j 
-              
-    # Swap the found minimum element with  
-    # the first element         
-    A[i], A[min_idx] = A[min_idx], A[i] 
-  
-# Driver code to test above 
-print ("Sorted array") 
-for i in range(len(A)): 
-    print("%d" %A[i]),  
-
+# Python program for implementation of Insertion Sort
+ 
+# Function to do insertion sort
+def insertionSort(arr):
+ 
+    # Traverse through 1 to len(arr)
+    for i in range(1, len(arr)):
+ 
+        key = arr[i]
+ 
+        # Move elements of arr[0..i-1], that are
+        # greater than key, to one position ahead
+        # of their current position
+        j = i-1
+        while j >= 0 and key < arr[j] :
+                arr[j + 1] = arr[j]
+                j -= 1
+        arr[j + 1] = key
+ 
+ 
+# Driver code to test above
+arr = [12, 11, 13, 5, 6]
+insertionSort(arr)
+for i in range(len(arr)):
+    print ("% d" % arr[i])
+ 
+# This code is contributed by Mohit Kumra
 ```
 
 ### <center> Bubble (Пузырьком) </center>
