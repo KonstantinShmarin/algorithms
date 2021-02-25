@@ -18,6 +18,7 @@ The array is virtually split into a sorted and an unsorted part.
 Values from the unsorted part are picked and placed at the correct position in the sorted part.
 
 Algorithm
+
 ![Insertion](https://raw.githubusercontent.com/KonstantinShmarin/algorithms/main/img/insertionsort.png)
 
 <b>To sort an array of size n in ascending order:</b> 
