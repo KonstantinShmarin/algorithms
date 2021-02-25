@@ -73,6 +73,8 @@ using System;
   
 class GFG 
 {  
+
+//------------------------------------------
     static void sort(int []arr) 
     { 
         int n = arr.Length; 
@@ -93,7 +95,7 @@ class GFG
             arr[i] = temp; 
         } 
     } 
-  
+ //------------------------------------------
     // Prints the array 
     static void printArray(int []arr) 
     { 
@@ -116,12 +118,107 @@ class GFG
 // This code is contributed by Sam007 
 ```
 
+-- javascript --
+```javascript
+function insertionSort(arr) {
+  let memIndex = 0
+  for (let i = 0; i < arr.length; i++) {
+    memIndex = i;
+    for (let j = i + 1; j >= 0; --j) {
+      if (arr[j] >= arr[i]) {
+        break;
+      }
+      if (arr[j] < arr[i]) {
+        var temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+        i = i - 1;
+      }
+    }
+    i = memIndex;
+  }
+  return arr;
+}
+const arr = [5, 1, 6, 2, 4, 9, 9, 3, 1, 1, 1];
+console.log('Unsorted array', arr);
+console.log('Sorted array:', insertionSort(arr));
 
-###  <center> Selection (Выбором) </center>
+```
 
+-- PHP --
+```php
+<?php 
+// PHP program for implementation  
+// of selection sort  
+function selection_sort(&$arr, $n)  
+{ 
+    for($i = 0; $i < $n ; $i++) 
+    { 
+        $low = $i; 
+        for($j = $i + 1; $j < $n ; $j++) 
+        { 
+            if ($arr[$j] < $arr[$low]) 
+            { 
+                $low = $j; 
+            } 
+        } 
+          
+        // swap the minimum value to $ith node 
+        if ($arr[$i] > $arr[$low]) 
+        { 
+            $tmp = $arr[$i]; 
+            $arr[$i] = $arr[$low]; 
+            $arr[$low] = $tmp; 
+        } 
+    } 
+} 
+  
+// Driver Code 
+$arr = array(64, 25, 12, 22, 11); 
+$len = count($arr); 
+selection_sort($arr, $len); 
+echo "Sorted array : \n";  
+  
+for ($i = 0; $i < $len; $i++)  
+    echo $arr[$i] . " ";  
+  
+// This code is contributed  
+// by Deepika Gupta.  
+?>  
+
+```
+
+-- Python --
+```Python
+# Python program for implementation of Selection 
+# Sort 
+import sys 
+A = [64, 25, 12, 22, 11] 
+  
+# Traverse through all array elements 
+for i in range(len(A)): 
+      
+    # Find the minimum element in remaining  
+    # unsorted array 
+    min_idx = i 
+    for j in range(i+1, len(A)): 
+        if A[min_idx] > A[j]: 
+            min_idx = j 
+              
+    # Swap the found minimum element with  
+    # the first element         
+    A[i], A[min_idx] = A[min_idx], A[i] 
+  
+# Driver code to test above 
+print ("Sorted array") 
+for i in range(len(A)): 
+    print("%d" %A[i]),  
+
+```
 
 ### <center> Bubble (Пузырьком) </center>
 
+###  <center> Selection (Выбором) </center>
 
 ### <center> Shell (Метод Шелла) </center>
 
