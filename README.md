@@ -13,9 +13,17 @@ For these reasons, and because it is also stable, insertion sort is often used a
 * 2 - explanation: 
 
 <p align="justify">
-Although it is one of the elementary sorting algorithms with O(n2) worst-case time, insertion sort is the algorithm of choice either when the data is nearly sorted (because it is adaptive) or when the problem size is small (because it has low overhead).
+Insertion sort is a simple sorting algorithm that works similar to the way you sort playing cards in your hands. 
+The array is virtually split into a sorted and an unsorted part.
+Values from the unsorted part are picked and placed at the correct position in the sorted part.
 
-For these reasons, and because it is also stable, insertion sort is often used as the recursive base case (when the problem size is small) for higher overhead divide-and-conquer sorting algorithms, such as merge sort or quick sort.
+Algorithm
+![Insertion](https://raw.githubusercontent.com/KonstantinShmarin/algorithms/main/img/insertionsort.png)
+
+<b>To sort an array of size n in ascending order:</b> 
+- 1: Iterate from arr[1] to arr[n] over the array. 
+- 2: Compare the current element (key) to its predecessor. 
+- 3: If the key element is smaller than its predecessor, compare it to the elements before. Move the greater elements one position up to make space for the swapped element.
 </p>
 
 ![Insertion](https://raw.githubusercontent.com/KonstantinShmarin/algorithms/main/img/sortinsert.gif)
@@ -452,6 +460,26 @@ for i in range(len(arr)):
 ```
 
 ###  <center> Selection (Выбором) </center>
+
+* 1 - explanation:
+<p align="justify">
+
+Bubble sort has many of the same properties as insertion sort, but has slightly higher overhead. In the case of nearly sorted data, bubble sort takes O(n) time, but requires at least 2 passes through the data (whereas insertion sort requires something more like 1 pass).
+</p>
+
+
+-- Pseudocode --
+```
+FOR J=1 TO N-1 STEP 1
+ F=0
+ FOR I=0 TO N-1-J STEP 1
+   IF A[I]>A[I+1] THEN SWAP A[I],A[I+1]:F=1
+ NEXT I
+ IF F=0 THEN EXIT FOR
+NEXT J
+
+```
+
 
 ### <center> Shell (Метод Шелла) </center>
 
