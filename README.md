@@ -1632,146 +1632,373 @@ for i in range(n):
 
 * 1 - explanation:
 <p align="justify">
+Like Merge Sort, QuickSort is a Divide and Conquer algorithm. It picks an element as pivot and partitions the given array around the picked pivot. There are many different versions of quickSort that pick pivot in different ways. 
 
-Bubble sort has many of the same properties as insertion sort, but has slightly higher overhead. In the case of nearly sorted data, bubble sort takes O(n) time, but requires at least 2 passes through the data (whereas insertion sort requires something more like 1 pass).
+1. Always pick first element as pivot.
+2. Always pick last element as pivot (implemented below)
+3. Pick a random element as pivot.
+4. Pick median as pivot.
+
+The key process in quickSort is partition(). Target of partitions is, given an array and an element x of array as pivot, put x at its correct position in sorted array and put all smaller elements (smaller than x) before x, and put all greater elements (greater than x) after x. All this should be done in linear time.
+<b>Pseudo Code for recursive QuickSort function :</b>
 </p>
 
-
-
-![Selection ](https://raw.githubusercontent.com/KonstantinShmarin/algorithms/main/img/sortbubble.gif)
-
-
--- Pseudocode --
 ```
-FOR J=1 TO N-1 STEP 1
- F=0
- FOR I=0 TO N-1-J STEP 1
-   IF A[I]>A[I+1] THEN SWAP A[I],A[I+1]:F=1
- NEXT I
- IF F=0 THEN EXIT FOR
-NEXT J
+/* low  --> Starting index,  high  --> Ending index */
+quickSort(arr[], low, high)
+{
+    if (low < high)
+    {
+        /* pi is partitioning index, arr[pi] is now
+           at right place */
+        pi = partition(arr, low, high);
 
-```
-
--- C# --
-```
-FOR J=1 TO N-1 STEP 1
- F=0
- FOR I=0 TO N-1-J STEP 1
-   IF A[I]>A[I+1] THEN SWAP A[I],A[I+1]:F=1
- NEXT I
- IF F=0 THEN EXIT FOR
-NEXT J
+        quickSort(arr, low, pi - 1);  // Before pi
+        quickSort(arr, pi + 1, high); // After pi
+    }
+}
 
 ```
-
--- JavaScript --
-```
-FOR J=1 TO N-1 STEP 1
- F=0
- FOR I=0 TO N-1-J STEP 1
-   IF A[I]>A[I+1] THEN SWAP A[I],A[I+1]:F=1
- NEXT I
- IF F=0 THEN EXIT FOR
-NEXT J
-
-```
-
--- PHP --
-```
-FOR J=1 TO N-1 STEP 1
- F=0
- FOR I=0 TO N-1-J STEP 1
-   IF A[I]>A[I+1] THEN SWAP A[I],A[I+1]:F=1
- NEXT I
- IF F=0 THEN EXIT FOR
-NEXT J
-
-```
-
--- Python --
-```
-FOR J=1 TO N-1 STEP 1
- F=0
- FOR I=0 TO N-1-J STEP 1
-   IF A[I]>A[I+1] THEN SWAP A[I],A[I+1]:F=1
- NEXT I
- IF F=0 THEN EXIT FOR
-NEXT J
-
-```
-
-###  <center> Quick3 (Быстрая3) </center>
-
-
-* 1 - explanation:
+* 2 - explanation:
 <p align="justify">
+When carefully implemented, quick sort is robust and has low overhead. When a stable sort is not needed, quick sort is an excellent general-purpose sort – although the 3-way partitioning version should always be used instead.
 
-Bubble sort has many of the same properties as insertion sort, but has slightly higher overhead. In the case of nearly sorted data, bubble sort takes O(n) time, but requires at least 2 passes through the data (whereas insertion sort requires something more like 1 pass).
+The 2-way partitioning code shown above is written for clarity rather than optimal performance; it exhibits poor locality, and, critically, exhibits O(n2) time when there are few unique keys. A more efficient and robust 2-way partitioning method is given in Quicksort is Optimal by Robert Sedgewick and Jon Bentley. The robust partitioning produces balanced recursion when there are many values equal to the pivot, yielding probabilistic guarantees of O(n·lg(n)) time and O(lg(n)) space for all inputs.
+
+With both sub-sorts performed recursively, quick sort requires O(n) extra space for the recursion stack in the worst case when recursion is not balanced. This is exceedingly unlikely to occur, but it can be avoided by sorting the smaller sub-array recursively first; the second sub-array sort is a tail recursive call, which may be done with iteration instead. With this optimization, the algorithm uses O(lg(n)) extra space in the worst case.
 </p>
 
 
-
-![Selection ](https://raw.githubusercontent.com/KonstantinShmarin/algorithms/main/img/sortbubble.gif)
+![Quick](https://raw.githubusercontent.com/KonstantinShmarin/algorithms/main/img/sortquick.gif)
 
 
 -- Pseudocode --
 ```
-FOR J=1 TO N-1 STEP 1
- F=0
- FOR I=0 TO N-1-J STEP 1
-   IF A[I]>A[I+1] THEN SWAP A[I],A[I+1]:F=1
- NEXT I
- IF F=0 THEN EXIT FOR
-NEXT J
+_# choose pivot_
+swap a[1,rand(1,n)]
 
+_# 2-way partition_
+k = 1
+for i = 2:n, if a[i] < a[1], swap a[++k,i]
+swap a[1,k]
+_→ invariant: a[1..k-1] < a[k] <= a[k+1..n]_
+
+_# recursive sorts_
+sort a[1..k-1]
+sort a[k+1,n]
+```
+
+
+<p align="justify">
+<p> Partition Algorithm </p>
+There can be many ways to do partition, following pseudo code adopts the method given in CLRS book. The logic is simple, we start from the leftmost element and keep track of index of smaller (or equal to) elements as i. While traversing, if we find a smaller element, we swap current element with arr[i]. Otherwise we ignore current element. 
+
+</p>
+
+```
+/* This function takes last element as pivot, places
+   the pivot element at its correct position in sorted
+    array, and places all smaller (smaller than pivot)
+   to left of pivot and all greater elements to right
+   of pivot */
+partition (arr[], low, high)
+{
+    // pivot (Element to be placed at right position)
+    pivot = arr[high];  
+ 
+    i = (low - 1)  // Index of smaller element and indicates the right position of pivot found so far
+
+    for (j = low; j <= high- 1; j++)
+    {
+        // If current element is smaller than the pivot
+        if (arr[j] < pivot)
+        {
+            i++;    // increment index of smaller element
+            swap arr[i] and arr[j]
+        }
+    }
+    swap arr[i + 1] and arr[high])
+    return (i + 1)
+}
+```
+
+#### Illustration of partition() :
+
+```
+arr[] = {10, 80, 30, 90, 40, 50, 70}
+Indexes:  0   1   2   3   4   5   6 
+
+low = 0, high =  6, pivot = arr[h] = 70
+Initialize index of smaller element, i = -1
+
+Traverse elements from j = low to high-1
+j = 0 : Since arr[j] <= pivot, do i++ and swap(arr[i], arr[j])
+i = 0 
+arr[] = {10, 80, 30, 90, 40, 50, 70} // No change as i and j 
+                                     // are same
+
+j = 1 : Since arr[j] > pivot, do nothing
+// No change in i and arr[]
+
+j = 2 : Since arr[j] <= pivot, do i++ and swap(arr[i], arr[j])
+i = 1
+arr[] = {10, 30, 80, 90, 40, 50, 70} // We swap 80 and 30 
+
+j = 3 : Since arr[j] > pivot, do nothing
+// No change in i and arr[]
+
+j = 4 : Since arr[j] <= pivot, do i++ and swap(arr[i], arr[j])
+i = 2
+arr[] = {10, 30, 40, 90, 80, 50, 70} // 80 and 40 Swapped
+j = 5 : Since arr[j] <= pivot, do i++ and swap arr[i] with arr[j] 
+i = 3 
+arr[] = {10, 30, 40, 50, 80, 90, 70} // 90 and 50 Swapped 
+
+We come out of loop because j is now equal to high-1.
+Finally we place pivot at correct position by swapping
+arr[i+1] and arr[high] (or pivot) 
+arr[] = {10, 30, 40, 50, 70, 90, 80} // 80 and 70 Swapped 
+
+Now 70 is at its correct place. All elements smaller than
+70 are before it and all elements greater than 70 are after
+it.
+```
+
+-- Pseudocode --
+```
+algorithm quicksort(A, lo, hi) is
+   if lo < hi then
+       p:= partition(A, lo, hi)
+       quicksort(A, lo, p)
+       quicksort(A, p + 1, hi)
+algorithm partition(A, low, high) is
+   pivot:= A[(low + high) / 2]
+   i:= low
+   j:= high
+   loop forever
+       
+       while A[i] < pivot 
+              i:= i + 1
+       while A[j] > pivot
+              j:= j - 1
+       if i >= j then
+           return j
+       swap A[i++] with A[j--]
 ```
 
 -- C# --
 ```
-FOR J=1 TO N-1 STEP 1
- F=0
- FOR I=0 TO N-1-J STEP 1
-   IF A[I]>A[I+1] THEN SWAP A[I],A[I+1]:F=1
- NEXT I
- IF F=0 THEN EXIT FOR
-NEXT J
+using System;
+
+class Program
+{
+    // method for exchanging array elements
+    static void Swap(ref int x, ref int y)
+    {
+        var t = x;
+        x = y;
+        y = t;
+    }
+
+    // method that returns the index of the pivot element
+    static int Partition(int[] array, int minIndex, int maxIndex)
+    {
+        var pivot = minIndex - 1;
+        for (var i = minIndex; i < maxIndex; i++)
+        {
+            if (array[i] < array[maxIndex])
+            {
+                pivot++;
+                Swap(ref array[pivot], ref array[i]);
+            }
+        }
+
+        pivot++;
+        Swap(ref array[pivot], ref array[maxIndex]);
+        return pivot;
+    }
+
+    // quick sort
+    static int[] QuickSort(int[] array, int minIndex, int maxIndex)
+    {
+        if (minIndex >= maxIndex)
+        {
+            return array;
+        }
+
+        var pivotIndex = Partition(array, minIndex, maxIndex);
+        QuickSort(array, minIndex, pivotIndex - 1);
+        QuickSort(array, pivotIndex + 1, maxIndex);
+
+        return array;
+    }
+
+    static int[] QuickSort(int[] array)
+    {
+        return QuickSort(array, 0, array.Length - 1);
+    }
+
+    static void Main(string[] args)
+    {
+        Console.Write("N = ");
+        var len = Convert.ToInt32(Console.ReadLine());
+        var a = new int[len];
+        for (var i = 0; i < a.Length; ++i)
+        {
+            Console.Write("a[{0}] = ", i);
+            a[i] = Convert.ToInt32(Console.ReadLine());
+        }
+
+        Console.WriteLine("Ordered array: {0}", string.Join(", ", QuickSort(a)));
+
+        Console.ReadLine();
+    }
+}
 
 ```
 
 -- JavaScript --
-```
-FOR J=1 TO N-1 STEP 1
- F=0
- FOR I=0 TO N-1-J STEP 1
-   IF A[I]>A[I+1] THEN SWAP A[I],A[I+1]:F=1
- NEXT I
- IF F=0 THEN EXIT FOR
-NEXT J
+```javascript
+var items = [5,3,7,6,2,9];
+function swap(items, leftIndex, rightIndex){
+    var temp = items[leftIndex];
+    items[leftIndex] = items[rightIndex];
+    items[rightIndex] = temp;
+}
+function partition(items, left, right) {
+    var pivot   = items[Math.floor((right + left) / 2)], //middle element
+        i       = left, //left pointer
+        j       = right; //right pointer
+    while (i <= j) {
+        while (items[i] < pivot) {
+            i++;
+        }
+        while (items[j] > pivot) {
+            j--;
+        }
+        if (i <= j) {
+            swap(items, i, j); //sawpping two elements
+            i++;
+            j--;
+        }
+    }
+    return i;
+}
+
+function quickSort(items, left, right) {
+    var index;
+    if (items.length > 1) {
+        index = partition(items, left, right); //index returned from partition
+        if (left < index - 1) { //more elements on the left side of the pivot
+            quickSort(items, left, index - 1);
+        }
+        if (index < right) { //more elements on the right side of the pivot
+            quickSort(items, index, right);
+        }
+    }
+    return items;
+}
+// first call to quick sort
+var sortedArray = quickSort(items, 0, items.length - 1);
+console.log(sortedArray); //prints [2,3,5,6,7,9]
 
 ```
 
 -- PHP --
 ```
-FOR J=1 TO N-1 STEP 1
- F=0
- FOR I=0 TO N-1-J STEP 1
-   IF A[I]>A[I+1] THEN SWAP A[I],A[I+1]:F=1
- NEXT I
- IF F=0 THEN EXIT FOR
-NEXT J
+<?php
+function quick_sort($my_array)
+ {
+	$loe = $gt = array();
+	if(count($my_array) < 2)
+	{
+		return $my_array;
+	}
+	$pivot_key = key($my_array);
+	$pivot = array_shift($my_array);
+	foreach($my_array as $val)
+	{
+		if($val <= $pivot)
+		{
+			$loe[] = $val;
+		}elseif ($val > $pivot)
+		{
+			$gt[] = $val;
+		}
+	}
+	return array_merge(quick_sort($loe),array($pivot_key=>$pivot),quick_sort($gt));
+}
+ 
+$my_array = array(3, 0, 2, 5, -1, 4, 1);
+echo 'Original Array : '.implode(',',$my_array).'\n';
+$my_array = quick_sort($my_array);
+echo 'Sorted Array : '.implode(',',$my_array);
+?>
+
 
 ```
 
 -- Python --
 ```
-FOR J=1 TO N-1 STEP 1
- F=0
- FOR I=0 TO N-1-J STEP 1
-   IF A[I]>A[I+1] THEN SWAP A[I],A[I+1]:F=1
- NEXT I
- IF F=0 THEN EXIT FOR
-NEXT J
+# Python program for implementation of Quicksort Sort 
+  
+# This function takes last element as pivot, places 
+# the pivot element at its correct position in sorted 
+# array, and places all smaller (smaller than pivot) 
+# to left of pivot and all greater elements to right 
+# of pivot 
+  
+  
+def partition(arr, low, high): 
+    i = (low-1)         # index of smaller element 
+    pivot = arr[high]     # pivot 
+  
+    for j in range(low, high): 
+  
+        # If current element is smaller than or 
+        # equal to pivot 
+        if arr[j] <= pivot: 
+  
+            # increment index of smaller element 
+            i = i+1
+            arr[i], arr[j] = arr[j], arr[i] 
+  
+    arr[i+1], arr[high] = arr[high], arr[i+1] 
+    return (i+1) 
+  
+# The main function that implements QuickSort 
+# arr[] --> Array to be sorted, 
+# low  --> Starting index, 
+# high  --> Ending index 
+  
+# Function to do Quick sort 
+  
+  
+def quickSort(arr, low, high): 
+    if len(arr) == 1: 
+        return arr 
+    if low < high: 
+  
+        # pi is partitioning index, arr[p] is now 
+        # at right place 
+        pi = partition(arr, low, high) 
+  
+        # Separately sort elements before 
+        # partition and after partition 
+        quickSort(arr, low, pi-1) 
+        quickSort(arr, pi+1, high) 
+  
+  
+# Driver code to test above 
+arr = [10, 7, 8, 9, 1, 5] 
+n = len(arr) 
+quickSort(arr, 0, n-1) 
+print("Sorted array is:") 
+for i in range(n): 
+    print("%d" % arr[i]), 
+  
+# This code is contributed by Mohit Kumra 
+#This code in improved by https://github.com/anushkrishnav 
 
 ```
 
@@ -1785,73 +2012,147 @@ NEXT J
 
 * 1 - explanation:
 <p align="justify">
+A simple approach is to do a linear search, i.e  
 
-Bubble sort has many of the same properties as insertion sort, but has slightly higher overhead. In the case of nearly sorted data, bubble sort takes O(n) time, but requires at least 2 passes through the data (whereas insertion sort requires something more like 1 pass).
+* Start from the leftmost element of arr[] and one by one compare x with each element of arr[]
+* If x matches with an element, return the index.
+* If x doesn’t match with any of elements, return -1.
 </p>
 
 
 
-![Selection ](https://raw.githubusercontent.com/KonstantinShmarin/algorithms/main/img/sortbubble.gif)
+![SLinear Search ](https://raw.githubusercontent.com/KonstantinShmarin/algorithms/main/img/linearsearch.png)
 
 
 -- Pseudocode --
 ```
-FOR J=1 TO N-1 STEP 1
- F=0
- FOR I=0 TO N-1-J STEP 1
-   IF A[I]>A[I+1] THEN SWAP A[I],A[I+1]:F=1
- NEXT I
- IF F=0 THEN EXIT FOR
-NEXT J
+Input : arr[] = {10, 20, 80, 30, 60, 50, 
+                     110, 100, 130, 170}
+          x = 110;
+Output : 6
+Element x is present at index 6
 
+Input : arr[] = {10, 20, 80, 30, 60, 50, 
+                     110, 100, 130, 170}
+           x = 175;
+Output : -1
+Element x is not present in arr[].
 ```
 
 -- C# --
-```
-FOR J=1 TO N-1 STEP 1
- F=0
- FOR I=0 TO N-1-J STEP 1
-   IF A[I]>A[I+1] THEN SWAP A[I],A[I+1]:F=1
- NEXT I
- IF F=0 THEN EXIT FOR
-NEXT J
+```C#
+// C# code to linearly search x in arr[]. If x
+// is present then return its location, otherwise
+// return -1
+using System;
+ 
+class GFG {
+    public static int search(int[] arr, int x)
+    {
+        int n = arr.Length;
+        for (int i = 0; i < n; i++) 
+        {
+            if (arr[i] == x)
+                return i;
+        }
+        return -1;
+    }
+ 
+    // Driver code
+    public static void Main()
+    {
+        int[] arr = { 2, 3, 4, 10, 40 };
+        int x = 10;
+ 
+        // Function call
+        int result = search(arr, x);
+        if (result == -1)
+            Console.WriteLine(
+                "Element is not present in array");
+        else
+            Console.WriteLine("Element is present at index "
+                              + result);
+    }
+}
+ 
+// This code is contributed by DrRoot_
 
 ```
 
 -- JavaScript --
-```
-FOR J=1 TO N-1 STEP 1
- F=0
- FOR I=0 TO N-1-J STEP 1
-   IF A[I]>A[I+1] THEN SWAP A[I],A[I+1]:F=1
- NEXT I
- IF F=0 THEN EXIT FOR
-NEXT J
-
+```javascript
+const linearSearch = (list, item) => {
+    for (const [i, element] of list.entries()) {
+        if (element === item) {
+            return i
+        }
+    }
+}
+linearSearch(['a', 'b', 'c', 'd'], 'd') //3 (index start at 0)
 ```
 
 -- PHP --
-```
-FOR J=1 TO N-1 STEP 1
- F=0
- FOR I=0 TO N-1-J STEP 1
-   IF A[I]>A[I+1] THEN SWAP A[I],A[I+1]:F=1
- NEXT I
- IF F=0 THEN EXIT FOR
-NEXT J
+```php
+<?php
+// PHP code for linearly search x in arr[]. 
+// If x is present then return its location, 
+// otherwise return -1 
+ 
+function search($arr, $x)
+{
+    $n = sizeof($arr);
+    for($i = 0; $i < $n; $i++)
+    {
+        if($arr[$i] == $x)
+            return $i;
+    }
+    return -1;
+}
+ 
+// Driver Code
+$arr = array(2, 3, 4, 10, 40); 
+$x = 10;
+ 
+// Function call
+$result = search($arr, $x);
+if($result == -1)
+    echo "Element is not present in array";
+else
+    echo "Element is present at index " ,
+                                 $result;
+ 
+// This code is contributed
+// by jit_t
+?>
 
 ```
 
 -- Python --
-```
-FOR J=1 TO N-1 STEP 1
- F=0
- FOR I=0 TO N-1-J STEP 1
-   IF A[I]>A[I+1] THEN SWAP A[I],A[I+1]:F=1
- NEXT I
- IF F=0 THEN EXIT FOR
-NEXT J
-
+```python
+# Python3 code to linearly search x in arr[].
+# If x is present then return its location,
+# otherwise return -1
+ 
+ 
+def search(arr, n, x):
+ 
+    for i in range(0, n):
+        if (arr[i] == x):
+            return i
+    return -1
+ 
+ 
+# Driver Code
+arr = [2, 3, 4, 10, 40]
+x = 10
+n = len(arr)
+ 
+# Function call
+result = search(arr, n, x)
+if(result == -1):
+    print("Element is not present in array")
+else:
+    print("Element is present at index", result)
 ```
 
 ### <center> Binary Search (Бинарный поиск) </center>
@@ -1860,71 +2161,220 @@ NEXT J
 
 * 1 - explanation:
 <p align="justify">
+Given a sorted array arr[] of n elements, write a function to search a given element x in arr[].
+A simple approach is to do linear search.The time complexity of above algorithm is O(n). Another approach to perform the same task is using Binary Search.
 
-Bubble sort has many of the same properties as insertion sort, but has slightly higher overhead. In the case of nearly sorted data, bubble sort takes O(n) time, but requires at least 2 passes through the data (whereas insertion sort requires something more like 1 pass).
+Binary Search: Search a sorted array by repeatedly dividing the search interval in half. Begin with an interval covering the whole array. If the value of the search key is less than the item in the middle of the interval, narrow the interval to the lower half. Otherwise narrow it to the upper half. Repeatedly check until the value is found or the interval is empty.
 </p>
 
+Good explanation but in Russian language
 
+https://world-hello.ru/algorithms/binarnyj-poisk-prostymi-slovami.html
 
-![Selection ](https://raw.githubusercontent.com/KonstantinShmarin/algorithms/main/img/sortbubble.gif)
+<p align="justify">
+We basically ignore half of the elements just after one comparison.
 
+Compare x with the middle element.
+If x matches with middle element, we return the mid index.
+Else If x is greater than the mid element, then x can only lie in right half subarray after the mid element. So we recur for right half.
+Else (x is smaller) recur for the left half.
+</p>
+
+![Binary Search ](https://raw.githubusercontent.com/KonstantinShmarin/algorithms/main/img/binarysearch.png)
 
 -- Pseudocode --
 ```
-FOR J=1 TO N-1 STEP 1
- F=0
- FOR I=0 TO N-1-J STEP 1
-   IF A[I]>A[I+1] THEN SWAP A[I],A[I+1]:F=1
- NEXT I
- IF F=0 THEN EXIT FOR
-NEXT J
+Set first to 0
+Set last to the last index in the list
+Set found to false
+Set position to −1
+while found is false and first is less than or equal to last
+    Set middle to the index halfway between first and last
+    if list[middle] equals the desired value
+        Set found to true
+        Set position to middle
+    else if list[middle] is greater than the desired value
+        Set last to middle − 1
+    else
+        Set first to middle + 1
+return position
 
 ```
 
 -- C# --
-```
-FOR J=1 TO N-1 STEP 1
- F=0
- FOR I=0 TO N-1-J STEP 1
-   IF A[I]>A[I+1] THEN SWAP A[I],A[I+1]:F=1
- NEXT I
- IF F=0 THEN EXIT FOR
-NEXT J
-
+```C#
+// C# implementation of recursive Binary Search 
+using System; 
+  
+class GFG { 
+    // Returns index of x if it is present in 
+    // arr[l..r], else return -1 
+    static int binarySearch(int[] arr, int l, 
+                            int r, int x) 
+    { 
+        if (r >= l) { 
+            int mid = l + (r - l) / 2; 
+  
+            // If the element is present at the 
+            // middle itself 
+            if (arr[mid] == x) 
+                return mid; 
+  
+            // If element is smaller than mid, then 
+            // it can only be present in left subarray 
+            if (arr[mid] > x) 
+                return binarySearch(arr, l, mid - 1, x); 
+  
+            // Else the element can only be present 
+            // in right subarray 
+            return binarySearch(arr, mid + 1, r, x); 
+        } 
+  
+        // We reach here when element is not present 
+        // in array 
+        return -1; 
+    } 
+  
+    // Driver method to test above 
+    public static void Main() 
+    { 
+  
+        int[] arr = { 2, 3, 4, 10, 40 }; 
+        int n = arr.Length; 
+        int x = 10; 
+  
+        int result = binarySearch(arr, 0, n - 1, x); 
+  
+        if (result == -1) 
+            Console.WriteLine("Element not present"); 
+        else
+            Console.WriteLine("Element found at index "
+                              + result); 
+    } 
+} 
+  
+// This code is contributed by Sam007. 
 ```
 
 -- JavaScript --
-```
-FOR J=1 TO N-1 STEP 1
- F=0
- FOR I=0 TO N-1-J STEP 1
-   IF A[I]>A[I+1] THEN SWAP A[I],A[I+1]:F=1
- NEXT I
- IF F=0 THEN EXIT FOR
-NEXT J
+```javascript
+function binarySearch(value, list) {
+    let first = 0;    //left endpoint
+    let last = list.length - 1;   //right endpoint
+    let position = -1;
+    let found = false;
+    let middle;
+
+    while (found === false && first <= last) {
+        middle = Math.floor((first + last)/2);
+        if (list[middle] == value) {
+            found = true;
+            position = middle;
+        } else if (list[middle] > value) {  //if in lower half
+            last = middle - 1;
+        } else {  //in in upper half
+            first = middle + 1;
+        }
+    }
+    return position;
+}
 
 ```
 
 -- PHP --
-```
-FOR J=1 TO N-1 STEP 1
- F=0
- FOR I=0 TO N-1-J STEP 1
-   IF A[I]>A[I+1] THEN SWAP A[I],A[I+1]:F=1
- NEXT I
- IF F=0 THEN EXIT FOR
-NEXT J
-
+```php
+<?php 
+// PHP program to implement 
+// recursive Binary Search 
+  
+// A recursive binary search 
+// function. It returns location 
+// of x in given array arr[l..r]  
+// is present, otherwise -1 
+function binarySearch($arr, $l, $r, $x) 
+{ 
+if ($r >= $l) 
+{ 
+        $mid = ceil($l + ($r - $l) / 2); 
+  
+        // If the element is present  
+        // at the middle itself 
+        if ($arr[$mid] == $x)  
+            return floor($mid); 
+  
+        // If element is smaller than  
+        // mid, then it can only be  
+        // present in left subarray 
+        if ($arr[$mid] > $x)  
+            return binarySearch($arr, $l,  
+                                $mid - 1, $x); 
+  
+        // Else the element can only  
+        // be present in right subarray 
+        return binarySearch($arr, $mid + 1,  
+                            $r, $x); 
+} 
+  
+// We reach here when element  
+// is not present in array 
+return -1; 
+} 
+  
+// Driver Code 
+$arr = array(2, 3, 4, 10, 40); 
+$n = count($arr); 
+$x = 10; 
+$result = binarySearch($arr, 0, $n - 1, $x); 
+if(($result == -1)) 
+echo "Element is not present in array"; 
+else
+echo "Element is present at index ", 
+                            $result; 
+                              
+// This code is contributed by anuj_67. 
+?> 
 ```
 
 -- Python --
-```
-FOR J=1 TO N-1 STEP 1
- F=0
- FOR I=0 TO N-1-J STEP 1
-   IF A[I]>A[I+1] THEN SWAP A[I],A[I+1]:F=1
- NEXT I
- IF F=0 THEN EXIT FOR
-NEXT J
+```python
+# Python3 Program for recursive binary search. 
+  
+# Returns index of x in arr if present, else -1 
+def binarySearch (arr, l, r, x): 
+  
+    # Check base case 
+    if r >= l: 
+  
+        mid = l + (r - l) // 2
+  
+        # If element is present at the middle itself 
+        if arr[mid] == x: 
+            return mid 
+          
+        # If element is smaller than mid, then it  
+        # can only be present in left subarray 
+        elif arr[mid] > x: 
+            return binarySearch(arr, l, mid-1, x) 
+  
+        # Else the element can only be present  
+        # in right subarray 
+        else: 
+            return binarySearch(arr, mid + 1, r, x) 
+  
+    else: 
+        # Element is not present in the array 
+        return -1
+  
+# Driver Code 
+arr = [ 2, 3, 4, 10, 40 ] 
+x = 10
+  
+# Function call 
+result = binarySearch(arr, 0, len(arr)-1, x) 
+  
+if result != -1: 
+    print ("Element is present at index % d" % result) 
+else: 
+    print ("Element is not present in array") 
 
 ```
