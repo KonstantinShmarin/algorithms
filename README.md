@@ -1271,73 +1271,360 @@ if __name__ == '__main__':
 
 * 1 - explanation:
 <p align="justify">
+Heap sort is a comparison based sorting technique based on Binary Heap data structure. It is similar to selection sort where we first find the maximum element and place the maximum element at the end. We repeat the same process for the remaining elements.
 
-Bubble sort has many of the same properties as insertion sort, but has slightly higher overhead. In the case of nearly sorted data, bubble sort takes O(n) time, but requires at least 2 passes through the data (whereas insertion sort requires something more like 1 pass).
+<b>What is Binary Heap?</b>
+Let us first define a Complete Binary Tree. A complete binary tree is a binary tree in which every level, except possibly the last, is completely filled, and all nodes are as far left as possible (Source Wikipedia)
+A Binary Heap is a Complete Binary Tree where items are stored in a special order such that value in a parent node is greater(or smaller) than the values in its two children nodes. The former is called as max heap and the latter is called min-heap. The heap can be represented by a binary tree or array.
+
+<b>Why array based representation for Binary Heap?</b>
+Since a Binary Heap is a Complete Binary Tree, it can be easily represented as an array and the array-based representation is space-efficient. If the parent node is stored at index I, the left child can be calculated by 2 * I + 1 and right child by 2 * I + 2 (assuming the indexing starts at 0).
+
+<b>Heap Sort Algorithm for sorting in increasing order:</b>
+1. Build a max heap from the input data.
+2. At this point, the largest item is stored at the root of the heap. Replace it with the last item of the heap followed by reducing the size of heap by 1. Finally, heapify the root of the tree.
+3. Repeat step 2 while size of heap is greater than 1.
+
+<b>How to build the heap?</b>
+Heapify procedure can be applied to a node only if its children nodes are heapified. So the heapification must be performed in the bottom-up order.
+Lets understand with the help of an example:
+</p>
+
+```
+Input data: 4, 10, 3, 5, 1
+         4(0)
+        /   \
+     10(1)   3(2)
+    /   \
+ 5(3)    1(4)
+
+The numbers in bracket represent the indices in the array 
+representation of data.
+
+Applying heapify procedure to index 1:
+         4(0)
+        /   \
+    10(1)    3(2)
+    /   \
+5(3)    1(4)
+
+Applying heapify procedure to index 0:
+        10(0)
+        /  \
+     5(1)  3(2)
+    /   \
+ 4(3)    1(4)
+The heapify procedure calls itself recursively to build heap
+ in top down manner.
+
+```
+
+* 2 - explanation:
+<p align="justify">
+Heap sort is simple to implement, performs an O(n·lg(n)) in-place sort, but is not stable.
+
+The first loop, the Θ(n) “heapify” phase, puts the array into heap order. The second loop, the O(n·lg(n)) “sortdown” phase, repeatedly extracts the maximum and restores heap order.
+
+The sink function is written recursively for clarity. Thus, as shown, the code requires Θ(lg(n)) space for the recursive call stack. However, the tail recursion in sink() is easily converted to iteration, which yields the O(1) space bound.
+
+Both phases are slightly adaptive, though not in any particularly useful manner. In the nearly sorted case, the heapify phase destroys the original order. In the reversed case, the heapify phase is as fast as possible since the array starts in heap order, but then the sortdown phase is typical. In the few unique keys case, there is some speedup but not as much as in shell sort or 3-way quicksort.
 </p>
 
 
 
-![Selection ](https://raw.githubusercontent.com/KonstantinShmarin/algorithms/main/img/sortbubble.gif)
+![Heap ](https://raw.githubusercontent.com/KonstantinShmarin/algorithms/main/img/heapsort.gif)
 
 
 -- Pseudocode --
 ```
-FOR J=1 TO N-1 STEP 1
- F=0
- FOR I=0 TO N-1-J STEP 1
-   IF A[I]>A[I+1] THEN SWAP A[I],A[I+1]:F=1
- NEXT I
- IF F=0 THEN EXIT FOR
-NEXT J
+# heapify
+for i = n/2:1, sink(a,i,n)
+→ invariant: a[1,n] in heap order
+
+# sortdown
+for i = 1:n,
+    swap a[1,n-i+1]
+    sink(a,1,n-i)
+    → invariant: a[n-i+1,n] in final position
+end
+
+# sink from i in a[1..n]
+function sink(a,i,n):
+    # {lc,rc,mc} = {left,right,max} child index
+    lc = 2*i
+    if lc > n, return # no children
+    rc = lc + 1
+    mc = (rc > n) ? lc : (a[lc] > a[rc]) ? lc : rc
+    if a[i] >= a[mc], return # heap ordered
+    swap a[i,mc]
+    sink(a,mc,n)
 
 ```
 
 -- C# --
-```
-FOR J=1 TO N-1 STEP 1
- F=0
- FOR I=0 TO N-1-J STEP 1
-   IF A[I]>A[I+1] THEN SWAP A[I],A[I+1]:F=1
- NEXT I
- IF F=0 THEN EXIT FOR
-NEXT J
+```C#
+// C# program for implementation of Heap Sort
+using System;
+ 
+public class HeapSort {
+    public void sort(int[] arr)
+    {
+        int n = arr.Length;
+ 
+        // Build heap (rearrange array)
+        for (int i = n / 2 - 1; i >= 0; i--)
+            heapify(arr, n, i);
+ 
+        // One by one extract an element from heap
+        for (int i = n - 1; i > 0; i--) {
+            // Move current root to end
+            int temp = arr[0];
+            arr[0] = arr[i];
+            arr[i] = temp;
+ 
+            // call max heapify on the reduced heap
+            heapify(arr, i, 0);
+        }
+    }
+ 
+    // To heapify a subtree rooted with node i which is
+    // an index in arr[]. n is size of heap
+    void heapify(int[] arr, int n, int i)
+    {
+        int largest = i; // Initialize largest as root
+        int l = 2 * i + 1; // left = 2*i + 1
+        int r = 2 * i + 2; // right = 2*i + 2
+ 
+        // If left child is larger than root
+        if (l < n && arr[l] > arr[largest])
+            largest = l;
+ 
+        // If right child is larger than largest so far
+        if (r < n && arr[r] > arr[largest])
+            largest = r;
+ 
+        // If largest is not root
+        if (largest != i) {
+            int swap = arr[i];
+            arr[i] = arr[largest];
+            arr[largest] = swap;
+ 
+            // Recursively heapify the affected sub-tree
+            heapify(arr, n, largest);
+        }
+    }
+ 
+    /* A utility function to print array of size n */
+    static void printArray(int[] arr)
+    {
+        int n = arr.Length;
+        for (int i = 0; i < n; ++i)
+            Console.Write(arr[i] + " ");
+        Console.Read();
+    }
+ 
+    // Driver code
+    public static void Main()
+    {
+        int[] arr = { 12, 11, 13, 5, 6, 7 };
+        int n = arr.Length;
+ 
+        HeapSort ob = new HeapSort();
+        ob.sort(arr);
+ 
+        Console.WriteLine("Sorted array is");
+        printArray(arr);
+    }
+}
+ 
+// This code is contributed
+// by Akanksha Rai(Abby_akku)
 
 ```
 
 -- JavaScript --
-```
-FOR J=1 TO N-1 STEP 1
- F=0
- FOR I=0 TO N-1-J STEP 1
-   IF A[I]>A[I+1] THEN SWAP A[I],A[I+1]:F=1
- NEXT I
- IF F=0 THEN EXIT FOR
-NEXT J
+```javascript
+ var array_length;
+/* to create MAX  array */  
+function heap_root(input, i) {
+    var left = 2 * i + 1;
+    var right = 2 * i + 2;
+    var max = i;
+
+    if (left < array_length && input[left] > input[max]) {
+        max = left;
+    }
+
+    if (right < array_length && input[right] > input[max])     {
+        max = right;
+    }
+
+    if (max != i) {
+        swap(input, i, max);
+        heap_root(input, max);
+    }
+}
+
+function swap(input, index_A, index_B) {
+    var temp = input[index_A];
+
+    input[index_A] = input[index_B];
+    input[index_B] = temp;
+}
+
+function heapSort(input) {
+    
+    array_length = input.length;
+
+    for (var i = Math.floor(array_length / 2); i >= 0; i -= 1)      {
+        heap_root(input, i);
+      }
+
+    for (i = input.length - 1; i > 0; i--) {
+        swap(input, 0, i);
+        array_length--;
+      
+      
+        heap_root(input, 0);
+    }
+}
+
+var arr = [3, 0, 2, 5, -1, 4, 1];
+heapSort(arr);
+console.log(arr);
 
 ```
 
 -- PHP --
-```
-FOR J=1 TO N-1 STEP 1
- F=0
- FOR I=0 TO N-1-J STEP 1
-   IF A[I]>A[I+1] THEN SWAP A[I],A[I+1]:F=1
- NEXT I
- IF F=0 THEN EXIT FOR
-NEXT J
-
+```php
+<?php
+ 
+// Php program for implementation of Heap Sort
+ 
+// To heapify a subtree rooted with node i which is
+// an index in arr[]. n is size of heap
+function heapify(&$arr, $n, $i)
+{
+    $largest = $i; // Initialize largest as root
+    $l = 2*$i + 1; // left = 2*i + 1
+    $r = 2*$i + 2; // right = 2*i + 2
+ 
+    // If left child is larger than root
+    if ($l < $n && $arr[$l] > $arr[$largest])
+        $largest = $l;
+ 
+    // If right child is larger than largest so far
+    if ($r < $n && $arr[$r] > $arr[$largest])
+        $largest = $r;
+ 
+    // If largest is not root
+    if ($largest != $i)
+    {
+        $swap = $arr[$i];
+        $arr[$i] = $arr[$largest];
+        $arr[$largest] = $swap;
+ 
+        // Recursively heapify the affected sub-tree
+        heapify($arr, $n, $largest);
+    }
+}
+ 
+// main function to do heap sort
+function heapSort(&$arr, $n)
+{
+    // Build heap (rearrange array)
+    for ($i = $n / 2 - 1; $i >= 0; $i--)
+        heapify($arr, $n, $i);
+ 
+    // One by one extract an element from heap
+    for ($i = $n-1; $i > 0; $i--)
+    {
+        // Move current root to end
+        $temp = $arr[0];
+            $arr[0] = $arr[$i];
+            $arr[$i] = $temp;
+ 
+        // call max heapify on the reduced heap
+        heapify($arr, $i, 0);
+    }
+}
+ 
+/* A utility function to print array of size n */
+function printArray(&$arr, $n)
+{
+    for ($i = 0; $i < $n; ++$i)
+        echo ($arr[$i]." ") ; 
+         
+} 
+ 
+// Driver program
+    $arr = array(12, 11, 13, 5, 6, 7);
+    $n = sizeof($arr)/sizeof($arr[0]);
+ 
+    heapSort($arr, $n);
+ 
+    echo 'Sorted array is ' . "\n";
+     
+    printArray($arr , $n);
+ 
+// This code is contributed by Shivi_Aggarwal
+?>
 ```
 
 -- Python --
-```
-FOR J=1 TO N-1 STEP 1
- F=0
- FOR I=0 TO N-1-J STEP 1
-   IF A[I]>A[I+1] THEN SWAP A[I],A[I+1]:F=1
- NEXT I
- IF F=0 THEN EXIT FOR
-NEXT J
-
+```python
+# Python program for implementation of heap Sort
+ 
+# To heapify subtree rooted at index i.
+# n is size of heap
+ 
+ 
+def heapify(arr, n, i):
+    largest = i  # Initialize largest as root
+    l = 2 * i + 1     # left = 2*i + 1
+    r = 2 * i + 2     # right = 2*i + 2
+ 
+    # See if left child of root exists and is
+    # greater than root
+    if l < n and arr[largest] < arr[l]:
+        largest = l
+ 
+    # See if right child of root exists and is
+    # greater than root
+    if r < n and arr[largest] < arr[r]:
+        largest = r
+ 
+    # Change root, if needed
+    if largest != i:
+        arr[i], arr[largest] = arr[largest], arr[i]  # swap
+ 
+        # Heapify the root.
+        heapify(arr, n, largest)
+ 
+# The main function to sort an array of given size
+ 
+ 
+def heapSort(arr):
+    n = len(arr)
+ 
+    # Build a maxheap.
+    for i in range(n//2 - 1, -1, -1):
+        heapify(arr, n, i)
+ 
+    # One by one extract elements
+    for i in range(n-1, 0, -1):
+        arr[i], arr[0] = arr[0], arr[i]  # swap
+        heapify(arr, i, 0)
+ 
+ 
+# Driver code
+arr = [12, 11, 13, 5, 6, 7]
+heapSort(arr)
+n = len(arr)
+print("Sorted array is")
+for i in range(n):
+    print("%d" % arr[i]),
+# This code is contributed by Mohit Kumra
 ```
 
 ###  <center> Quick (Быстрая) </center>
